@@ -35,10 +35,6 @@ public class ServerGreeter extends Thread {
 				// The program will wait her until either a client connects or the timeout
 				// expires.
 				Socket sock = sg.accept();
-				
-
-
-						
 
 				// 10. Let the user know that the client has connected.
 				System.out.println("The client has connected");
@@ -76,5 +72,14 @@ public class ServerGreeter extends Thread {
 		// 16. In a new thread, create an object of the ServerGreeter class and start
 		// the thread. Don't forget the try-catch.
 
+		Thread t;
+		try {
+			t = new Thread(new ServerGreeter());
+			t.start();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
 	}
 }
