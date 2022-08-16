@@ -1,6 +1,9 @@
 package _02_Chat_Application;
 
 import java.net.*;
+
+import javax.swing.JOptionPane;
+
 import java.io.*;
 
 /*
@@ -22,9 +25,5 @@ public class ChatApp {
 		} catch (IOException e) {
 
 		}
-	}
-
-
-	
-	
+	}	
 }
