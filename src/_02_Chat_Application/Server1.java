@@ -1,57 +1,77 @@
 package _02_Chat_Application;
 
-import java.net.*;
+import java.io.EOFException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
 import javax.swing.JOptionPane;
 
-import java.io.*;
+public class Server1 {
 
-public class Server1 extends Thread {
-	ServerSocket sg;
+	private int port;
 
-	public Server1() throws IOException {
+	private ServerSocket server;
+	private Socket connection;
 
-		sg = new ServerSocket(8080);
-	}
+	ObjectOutputStream os;
+	ObjectInputStream is;
 
-	public void run() {
-		Boolean b = true;
-		while (b) {
-
-			try {
-
-				System.out.println("server is waiting for client to connect");
-
-				Socket sock = sg.accept();
-				System.out.println("The client has connected");
-				DataInputStream dInput1 = new DataInputStream(sock.getInputStream());
-				System.out.println(dInput1.readUTF());
-				DataOutputStream dOutput1 = new DataOutputStream(sock.getOutputStream());
-				String uInput = JOptionPane.showInputDialog("Enter an input to send to the server");
-				dOutput1.writeUTF(uInput);
-
-			} catch (SocketTimeoutException e) {
-
-				System.out.println("Socket timeout");
-				b = false;
-
-			} catch (IOException e1) {
-				System.out.println("caught IOException");
-				b = false;
-			}
+	public Server1(int port) {
+			this.port = port;
 		}
 
+	public void start() {
+		try {
+			server = new ServerSocket(port, 100);
+
+			connection = server.accept();
+
+			os = new ObjectOutputStream(connection.getOutputStream());
+			is = new ObjectInputStream(connection.getInputStream());
+
+			os.flush();
+
+			while (connection.isConnected()) {
+				try {
+					JOptionPane.showMessageDialog(null, is.readObject());
+					System.out.println(is.readObject());
+				} catch (EOFException e) {
+					JOptionPane.showMessageDialog(null, "Connection Lost");
+					System.exit(0);
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
-	public static void main(String[] args) {
-
-		Thread t;
+	public String getIPAddress() {
 		try {
-			t = new Thread(new Server1());
-			t.start();
+			return InetAddress.getLocalHost().getHostAddress();
+		} catch (UnknownHostException e) {
+			return "ERROR!!!!!";
+		}
+	}
+
+	public int getPort() {
+		return port;
+	}
+
+	public void sendClick() {
+		try {
+			if (os != null) {
+				os.writeObject("CLICK SENT FROM SERVER");
+				os.flush();
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 	}
+
 }
