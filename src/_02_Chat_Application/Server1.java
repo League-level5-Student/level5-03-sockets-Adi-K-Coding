@@ -20,9 +20,12 @@ public class Server1 {
 
 	ObjectOutputStream os;
 	ObjectInputStream is;
+	
+	ChatApp ca;
 
-	public Server1(int port) {
+	public Server1(int port, ChatApp ca) {
 			this.port = port;
+			this.ca = ca;
 		}
 
 	public void start() {
@@ -38,8 +41,10 @@ public class Server1 {
 
 			while (connection.isConnected()) {
 				try {
-					JOptionPane.showMessageDialog(null, is.readObject());
+//					JOptionPane.showMessageDialog(null, is.readObject());
 					System.out.println(is.readObject());
+					ca.label.setText(is.readObject()+"");
+					ca.pack();
 				} catch (EOFException e) {
 					JOptionPane.showMessageDialog(null, "Connection Lost");
 					System.exit(0);
@@ -63,11 +68,12 @@ public class Server1 {
 		return port;
 	}
 
-	public void sendClick() {
+	public void sendClick(String input) {
 		try {
 			if (os != null) {
-				os.writeObject("CLICK SENT FROM SERVER");
+				os.writeObject(input);
 				os.flush();
+				
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

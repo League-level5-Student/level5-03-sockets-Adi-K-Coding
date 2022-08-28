@@ -17,10 +17,13 @@ public class Client1 {
 
 	ObjectOutputStream os;
 	ObjectInputStream is;
+	
+	ChatApp ca;
 
-	public Client1(String ip, int port) {
+	public Client1(String ip, int port, ChatApp ca) {
 			this.ip = ip;
 			this.port = port;
+			this.ca = ca;
 		}
 
 	public void start() {
@@ -40,8 +43,10 @@ public class Client1 {
 
 		while (connection.isConnected()) {
 			try {
-				JOptionPane.showMessageDialog(null, is.readObject());
+//				JOptionPane.showMessageDialog(null, is.readObject());
 				System.out.println(is.readObject());
+				ca.label.setText(is.readObject()+"");
+				ca.pack();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -49,11 +54,12 @@ public class Client1 {
 		}
 	}
 
-	public void sendClick() {
+	public void sendClick(String input) {
 		try {
 			if (os != null) {
-				os.writeObject("CLICK SENT FROM CLIENT");
+				os.writeObject(input);
 				os.flush();
+				
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
